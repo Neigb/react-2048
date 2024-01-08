@@ -67,8 +67,7 @@ export default class Game extends React.Component {
       game_state: "started",
       cell_array: this.initCellArray(),
     });
-    this.touch_start_event = null;
-    this.touch_end_event = null;
+    this.touch_start_event = this.touch_end_event = null;
   }
 
   componentDidMount() {
@@ -118,7 +117,7 @@ export default class Game extends React.Component {
       const end_y = end_native_event.changedTouches[0].clientY;
       this.handleMove(start_x, start_y, end_x, end_y);
     }
-    this.touch_start_event = this.touch_start_event = null;
+    this.touch_start_event = this.touch_end_event = null;
   }
 
   handleMove(start_x, start_y, end_x, end_y) {
