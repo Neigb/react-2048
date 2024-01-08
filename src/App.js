@@ -6,8 +6,8 @@ import React, { useState } from 'react';
 function App() {
   const game_ref = React.createRef();
   const [base_config] = useState({
-    row_num: 10,
-    col_num: 10,
+    row_num: 4,
+    col_num: 6,
   });
 
 
