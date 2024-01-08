@@ -1,0 +1,20 @@
+.button {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #888;
+    font-weight: bolder;
+    box-shadow: 4px 4px 4px 0 rgba(0,0,0,.1);
+    cursor: pointer;
+    display: inline-block;
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 0;
+    padding: 12px 18px;
+    text-align: center;
+    touch-action: manipulation;
+    user-select: none;
+    vertical-align: middle;
+    white-space: nowrap;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}

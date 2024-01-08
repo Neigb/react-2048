@@ -1,0 +1,108 @@
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  padding-top: 10vh;
+  max-width: 600px;
+  touch-action: none;
+  margin-top: 0 !important;
+}
+
+.row {
+  width: 100%;
+  display: inline-flex;
+}
+
+.item {
+  background-color: #f2f3f3;
+  color: transparent;
+  display: inline-block;
+  border: 1px solid #ccc;
+  font-size: 30px;
+  flex: 1;
+  aspect-ratio: 1;
+  display: inline-flex;
+  user-select: none;
+}
+
+.flex-center {
+  justify-content: center;
+  align-items: center;
+}
+
+@media screen and (max-width: 600px) {
+  .container {
+    width: 90vw;
+  }
+}
+
+.tac {
+  text-align: center;
+}
+.color-0 {
+    background-color: #cdc1b4;
+}
+
+/* 2048各自得分样式 */
+.color-2 {
+    background-color: #eee4da;
+    color: #776e65;
+}
+.color-4 {
+    background-color: #ede0c8;
+    color: #776e65;
+}
+.color-8 {
+    background-color: #f2b179;
+    color: white;
+}
+.color-16 {
+    background-color: #f59563;
+    color: white;
+}
+.color-32 {
+    background-color: #f67c5f;
+    color: white;
+}
+.color-64 {
+    background-color: #f65e3b;
+    color: white;
+}
+.color-128 {
+    background-color: #edcf72;
+    color: white;
+}
+.color-256 {
+    background-color: #edcc61;
+    color: white;
+}
+.color-512 {
+    background-color: #edc850;
+    color: white;
+}
+.color-1024 {
+    background-color: #edc53f;
+    color: white;
+}
+.color-2048 {
+    background-color: #edc22e;
+    color: white;
+}
+.color-4096 {
+    background-color: #3c3a32;
+    color: white;
+}
+.color-8192 {
+    background-color: #2a2822;
+    color: white;
+}
+
+.color-16384 {
+    background-color: #222;
+    color: white;
+}
+
+/* 游戏背景色 */
+.game-background {
+    background-color: rgba(179, 163, 151, 0.5);
+    height: 100vh;
+}
