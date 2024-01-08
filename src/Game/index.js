@@ -80,11 +80,11 @@ export default class Game extends React.Component {
 
   componentDidMount() {
     this.init(this.props.base_config);
-    document.addEventListener('keydown', this.handleKeyDown);
+    document.addEventListener("keydown", this.handleKeyDown);
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener("keydown", this.handleKeyDown);
   }
 
   handleKeyDown = (event) => {
@@ -105,7 +105,7 @@ export default class Game extends React.Component {
       default:
         break;
     }
-  }
+  };
 
   // 触摸开始
   touchStart(event) {
@@ -196,12 +196,16 @@ export default class Game extends React.Component {
   }
 
   transposeMatrix(matrix) {
-    if (!Array.isArray(matrix) || matrix.length === 0 || !Array.isArray(matrix[0])) {
-      throw new Error('Invalid matrix');
+    if (
+      !Array.isArray(matrix) ||
+      matrix.length === 0 ||
+      !Array.isArray(matrix[0])
+    ) {
+      throw new Error("Invalid matrix");
     }
-    return matrix[0].map((_, i) => matrix.map(row => row[i]));
+    return matrix[0].map((_, i) => matrix.map((row) => row[i]));
   }
-  
+
   mergeLeftMoveResult(cell_array) {
     const new_cell_array = structuredClone(cell_array);
     new_cell_array.forEach((row, row_index) => {
@@ -264,7 +268,12 @@ export default class Game extends React.Component {
     if (this.arraysAreEqual(origin_cell_array.flat(), cell_array.flat())) {
     } else {
       generate_one(cell_array);
-      const score = cell_array.flat().reduce((total, item) => total + item, 0) - this.state.init_gengerate_cells.reduce((total, item) => total + item, 0);
+      const score =
+        cell_array.flat().reduce((total, item) => total + item, 0) -
+        this.state.init_gengerate_cells.reduce(
+          (total, item) => total + item,
+          0
+        );
       this.setState({ cell_array, score });
     }
     if (this.pendingGameOver(cell_array)) {
@@ -293,21 +302,27 @@ export default class Game extends React.Component {
 
   // 向上移动
   getMoveUpResult() {
-    let cell_array = this.transposeMatrix(structuredClone(this.state.cell_array));
+    let cell_array = this.transposeMatrix(
+      structuredClone(this.state.cell_array)
+    );
     return this.transposeMatrix(this.mergeLeftMoveResult(cell_array));
   }
 
   // 向下移动
   getMoveDownResult() {
-    let cell_array = this.transposeMatrix(structuredClone(this.state.cell_array)).map((row) => row.reverse());
-    return this.transposeMatrix(this.mergeLeftMoveResult(cell_array).map((row) => row.reverse()));
+    let cell_array = this.transposeMatrix(
+      structuredClone(this.state.cell_array)
+    ).map((row) => row.reverse());
+    return this.transposeMatrix(
+      this.mergeLeftMoveResult(cell_array).map((row) => row.reverse())
+    );
   }
 
   render() {
     if (this.state.game_state === "init") return <div>游戏未开始</div>;
     if (this.state.game_state === "stopped") return <div>游戏结束</div>;
     return (
-      <div className="container-wrap" style={{ maxWidth: max_width+'px' }}>
+      <div className="container-wrap" style={{ maxWidth: max_width + "px" }}>
         <p className="mb10 tal fz20">Score: {this.state.score}</p>
         <div
           onMouseDown={this.touchStart.bind(this)}
@@ -316,13 +331,21 @@ export default class Game extends React.Component {
           onTouchEnd={this.touchEnd.bind(this)}
           onTouchCancel={this.touchCancel.bind(this)}
           className="container flex-center"
-          style={{ margin: "0 auto", fontSize: max_width / (this.col * 2) + 'px' }}
+          style={{
+            margin: "0 auto",
+            fontSize: max_width / (this.col * 2) + "px",
+          }}
         >
           {this.state.cell_array.map((col_array, row_index) => (
             <Row key={row_index} row_index={row_index} col_array={col_array} />
           ))}
         </div>
-        <OperatButtons {...this.props} {...this.state} restart={this.restart.bind(this)} gameover={this.gameover.bind(this)} />
+        <OperatButtons
+          {...this.props}
+          {...this.state}
+          restart={this.restart.bind(this)}
+          gameover={this.gameover.bind(this)}
+        />
       </div>
     );
   }
