@@ -1,10 +1,11 @@
+.container-wrap {
+  margin: 0 auto;
+  padding-top: 8vh;
+}
 .container {
   display: flex;
   flex-wrap: wrap;
-  padding-top: 10vh;
-  max-width: 600px;
   touch-action: none;
-  margin-top: 0 !important;
 }
 
 .row {
@@ -17,7 +18,7 @@
   color: transparent;
   display: inline-block;
   border: 1px solid #ccc;
-  font-size: 30px;
+  font-size: 1em;
   flex: 1;
   aspect-ratio: 1;
   display: inline-flex;
@@ -30,14 +31,21 @@
 }
 
 @media screen and (max-width: 600px) {
-  .container {
+  .container-wrap {
     width: 90vw;
   }
 }
 
+.tal {
+  text-align: left;
+}
 .tac {
   text-align: center;
 }
+.tar {
+  text-align: right;
+}
+
 .color-0 {
     background-color: #cdc1b4;
 }
@@ -82,23 +90,28 @@
 .color-1024 {
     background-color: #edc53f;
     color: white;
+    font-size: 0.7em;
 }
 .color-2048 {
     background-color: #edc22e;
     color: white;
+    font-size: 0.7em;
 }
 .color-4096 {
     background-color: #3c3a32;
     color: white;
+    font-size: 0.7em;
 }
 .color-8192 {
     background-color: #2a2822;
     color: white;
+    font-size: 0.7em;
 }
 
 .color-16384 {
     background-color: #222;
     color: white;
+    font-size: 0.5em;
 }
 
 /* 游戏背景色 */

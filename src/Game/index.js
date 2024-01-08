@@ -1,9 +1,10 @@
 import React from "react";
 import "./index.css";
+import OperatButtons from "./OperatButtons";
 
 // 初始化生成方块数量
 const init_cell_num = 3;
-
+const max_width = 600;
 // 随机生成方块
 function generate_one(cell_array) {
   if (!cell_array) return;
@@ -14,15 +15,18 @@ function generate_one(cell_array) {
   const col_index = Math.floor(Math.random() * col);
   if (cell_array[row_index][col_index] === 0) {
     cell_array[row_index].splice(col_index, 1, value);
+    return value;
   } else {
-    generate_one(cell_array);
+    return generate_one(cell_array);
   }
 }
 
 function generate(cell_array) {
+  const values = [];
   for (let i = 0; i < init_cell_num; i++) {
-    generate_one(cell_array);
+    values.push(generate_one(cell_array));
   }
+  return values;
 }
 
 //  随机生成一个2或4
@@ -46,6 +50,8 @@ export default class Game extends React.Component {
   state = {
     game_state: "init", // init, started, stopped
     cell_array: [],
+    init_gengerate_cells: [],
+    score: 0,
   };
   touch_start_event = null;
   touch_end_event = null;
@@ -55,7 +61,8 @@ export default class Game extends React.Component {
       .fill(0)
       .map(() => new Array(this.col));
     cell_array.forEach((item) => item.fill(0));
-    generate(cell_array);
+    const init_gengerate_cells = generate(cell_array);
+    this.setState({ init_gengerate_cells });
     return cell_array;
   }
 
@@ -66,12 +73,38 @@ export default class Game extends React.Component {
     this.setState({
       game_state: "started",
       cell_array: this.initCellArray(),
+      score: 0,
     });
     this.touch_start_event = this.touch_end_event = null;
   }
 
   componentDidMount() {
     this.init(this.props.base_config);
+    document.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyDown);
+  }
+
+  handleKeyDown = (event) => {
+    const keyCode = event.keyCode;
+    switch (keyCode) {
+      case 37:
+        this.moveAction("left");
+        break;
+      case 38:
+        this.moveAction("up");
+        break;
+      case 39:
+        this.moveAction("right");
+        break;
+      case 40:
+        this.moveAction("down");
+        break;
+      default:
+        break;
+    }
   }
 
   // 触摸开始
@@ -79,9 +112,12 @@ export default class Game extends React.Component {
     this.touch_start_event = event;
   }
 
-  reStart(base_config) {
-    console.log("restart");
-    this.init(base_config);
+  restart() {
+    this.init(this.props.base_config);
+  }
+
+  gameover() {
+    this.setState({ game_state: "stopped" });
   }
 
   // 触摸结束
@@ -159,28 +195,13 @@ export default class Game extends React.Component {
     }
   }
 
-  turnLeft(cell_array) {
-    const new_cell_array = cell_array
-      .map((row, row_index) => {
-        return row.map((col, col_index) => {
-          return cell_array[col_index][row_index];
-        });
-      })
-      .reverse();
-    return new_cell_array;
+  transposeMatrix(matrix) {
+    if (!Array.isArray(matrix) || matrix.length === 0 || !Array.isArray(matrix[0])) {
+      throw new Error('Invalid matrix');
+    }
+    return matrix[0].map((_, i) => matrix.map(row => row[i]));
   }
-
-  turnRight(cell_array) {
-    const new_cell_array = cell_array.map((row, row_index) => {
-      return row
-        .map((col, col_index) => {
-          return cell_array[col_index][row_index];
-        })
-        .reverse();
-    });
-    return new_cell_array;
-  }
-
+  
   mergeLeftMoveResult(cell_array) {
     const new_cell_array = structuredClone(cell_array);
     new_cell_array.forEach((row, row_index) => {
@@ -208,6 +229,18 @@ export default class Game extends React.Component {
     return new_cell_array;
   }
 
+  pendingGameOver() {
+    const { row, col } = this;
+    const cell_array = this.state.cell_array;
+    for (let i = 0; i < row - 1; i++) {
+      for (let j = 0; j < col - 1; j++) {
+        if (cell_array[i][j] === cell_array[i][j + 1]) return false;
+        if (cell_array[i][j] === cell_array[i + 1][j]) return false;
+      }
+    }
+    return true;
+  }
+
   moveAction(direction) {
     let cell_array;
     switch (direction) {
@@ -229,10 +262,13 @@ export default class Game extends React.Component {
     }
     const origin_cell_array = this.state.cell_array;
     if (this.arraysAreEqual(origin_cell_array.flat(), cell_array.flat())) {
-      console.log(direction, "是无效移动");
     } else {
       generate_one(cell_array);
-      this.setState({ cell_array });
+      const score = cell_array.flat().reduce((total, item) => total + item, 0) - this.state.init_gengerate_cells.reduce((total, item) => total + item, 0);
+      this.setState({ cell_array, score });
+    }
+    if (this.pendingGameOver(cell_array)) {
+      this.setState({ game_state: "stopped" });
     }
   }
 
@@ -257,31 +293,36 @@ export default class Game extends React.Component {
 
   // 向上移动
   getMoveUpResult() {
-    let cell_array = structuredClone(this.state.cell_array);
-    return this.turnRight(this.mergeLeftMoveResult(this.turnLeft(cell_array)));
+    let cell_array = this.transposeMatrix(structuredClone(this.state.cell_array));
+    return this.transposeMatrix(this.mergeLeftMoveResult(cell_array));
   }
 
   // 向下移动
   getMoveDownResult() {
-    let cell_array = structuredClone(this.state.cell_array);
-    return this.turnLeft(this.mergeLeftMoveResult(this.turnRight(cell_array)));
+    let cell_array = this.transposeMatrix(structuredClone(this.state.cell_array)).map((row) => row.reverse());
+    return this.transposeMatrix(this.mergeLeftMoveResult(cell_array).map((row) => row.reverse()));
   }
 
   render() {
-    if (!this.state.game_state === "init") return <div>游戏未开始</div>;
+    if (this.state.game_state === "init") return <div>游戏未开始</div>;
+    if (this.state.game_state === "stopped") return <div>游戏结束</div>;
     return (
-      <div
-        onMouseDown={this.touchStart.bind(this)}
-        onMouseUp={this.touchEnd.bind(this)}
-        onTouchStart={this.touchStart.bind(this)}
-        onTouchEnd={this.touchEnd.bind(this)}
-        onTouchCancel={this.touchCancel.bind(this)}
-        className="container flex-center"
-        style={{ margin: "0 auto", marginTop: "10vh" }}
-      >
-        {this.state.cell_array.map((col_array, row_index) => (
-          <Row key={row_index} row_index={row_index} col_array={col_array} />
-        ))}
+      <div className="container-wrap" style={{ maxWidth: max_width+'px' }}>
+        <p className="mb10 tal fz20">Score: {this.state.score}</p>
+        <div
+          onMouseDown={this.touchStart.bind(this)}
+          onMouseUp={this.touchEnd.bind(this)}
+          onTouchStart={this.touchStart.bind(this)}
+          onTouchEnd={this.touchEnd.bind(this)}
+          onTouchCancel={this.touchCancel.bind(this)}
+          className="container flex-center"
+          style={{ margin: "0 auto", fontSize: max_width / (this.col * 2) + 'px' }}
+        >
+          {this.state.cell_array.map((col_array, row_index) => (
+            <Row key={row_index} row_index={row_index} col_array={col_array} />
+          ))}
+        </div>
+        <OperatButtons {...this.props} {...this.state} restart={this.restart.bind(this)} gameover={this.gameover.bind(this)} />
       </div>
     );
   }
