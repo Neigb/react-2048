@@ -321,33 +321,38 @@ export default class Game extends React.Component {
   }
 
   render() {
-    if (this.state.game_state === "init") return <div>loading</div>;
+    const { game_state, score } = this.state;
+    const isGameOver = game_state === "stopped";
+    if (game_state === "init") return <div>loading</div>;
     return (
       <>
         <div className="container-wrap" style={{ maxWidth: max_width + "px" }}>
-          <p className="mb10 tal fz20">Score: {this.state.score}</p>
-          <div
-            onMouseDown={this.touchStart.bind(this)}
-            onMouseUp={this.touchEnd.bind(this)}
-            onTouchStart={this.touchStart.bind(this)}
-            onTouchEnd={this.touchEnd.bind(this)}
-            onTouchCancel={this.touchCancel.bind(this)}
-            className="container flex-center"
-            style={{
-              margin: "0 auto",
-              fontSize: max_width / (this.col * 2) + "px",
-            }}
-          >
-            {this.state.cell_array.map((col_array, row_index) => (
-              <Row key={row_index} row_index={row_index} col_array={col_array} />
-            ))}
+          <div className={ isGameOver ? "blur5" : "" }>
+            <p className="mb10 tal fz20">Score: {score}</p>
+            <div
+              onMouseDown={this.touchStart.bind(this)}
+              onMouseUp={this.touchEnd.bind(this)}
+              onTouchStart={this.touchStart.bind(this)}
+              onTouchEnd={this.touchEnd.bind(this)}
+              onTouchCancel={this.touchCancel.bind(this)}
+              className="container flex-center"
+              style={{
+                margin: "0 auto",
+                fontSize: max_width / (this.col * 2) + "px",
+              }}
+            >
+              {this.state.cell_array.map((col_array, row_index) => (
+                <Row key={row_index} row_index={row_index} col_array={col_array} />
+              ))}
+            </div>
+            <OperatButtons
+              {...this.props}
+              {...this.state}
+              restart={this.restart.bind(this)}
+              gameover={this.gameover.bind(this)}
+            />
+
           </div>
-          <OperatButtons
-            {...this.props}
-            {...this.state}
-            restart={this.restart.bind(this)}
-            gameover={this.gameover.bind(this)}
-          />
           <GameOverPanel {...this.props} {...this.state} />
         </div>
       </>
