@@ -320,6 +320,20 @@ export default class Game extends React.Component {
     );
   }
 
+  turnLeft() {
+    const cell_array = this.transposeMatrix(
+      structuredClone(this.state.cell_array)
+    ).reverse();
+    this.setState({ cell_array });
+  }
+
+  turnRight() {
+    const cell_array = this.transposeMatrix(
+      structuredClone(this.state.cell_array)
+    ).map((row) => row.reverse());
+    this.setState({ cell_array });
+  }
+
   render() {
     const { game_state, score } = this.state;
     const isGameOver = game_state === "stopped";
@@ -350,6 +364,8 @@ export default class Game extends React.Component {
               {...this.state}
               restart={this.restart.bind(this)}
               gameover={this.gameover.bind(this)}
+              turnLeft={this.turnLeft.bind(this)}
+              turnRight={this.turnRight.bind(this)}
             />
 
           </div>

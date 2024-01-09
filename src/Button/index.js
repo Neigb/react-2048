@@ -1,7 +1,13 @@
 import './index.css';
 
 export function Button(props) {
-  const className = (props.className || '') + ' button';
-  return <button className={className} onClick={props.onClick}>{props.value}</button>;
+  let className = (props.className || '') + ' button';
+  const icon = props.icon ? <i className={'iconfont mr5 ' + props.icon}></i> : '';
+  const value = props.value ? <span>{props.value}</span> : '';
+  const onClick = props.onClick || (() => { });
+  if (props.disabled) {
+    className += ' disabled';
+  }
+  return <div className={className} onClick={onClick}>{icon}{value}</div>
 }
 export default Button;

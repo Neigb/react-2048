@@ -1,3 +1,4 @@
+import './icons/iconfont.css';
 import './App.css';
 import Game from './Game';
 import React, { useState } from 'react';
@@ -6,8 +7,8 @@ import React, { useState } from 'react';
 function App() {
   const game_ref = React.createRef();
   const [base_config] = useState({
-    row_num: 4,
-    col_num: 6,
+    row_num: 6,
+    col_num: 4,
   });
 
 

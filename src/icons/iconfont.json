@@ -1,0 +1,23 @@
+{
+  "id": "1587366",
+  "name": "no name",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "20226409",
+      "name": "翻转_右",
+      "font_class": "turn_right",
+      "unicode": "e625",
+      "unicode_decimal": 58917
+    },
+    {
+      "icon_id": "20226410",
+      "name": "翻转_左",
+      "font_class": "turn_left",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    }
+  ]
+}
