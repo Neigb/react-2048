@@ -65,3 +65,7 @@
   display: inline-block;
   min-width: 100px;
 }
+.w300 {
+  display: inline-block;
+  width: 300px;
+}

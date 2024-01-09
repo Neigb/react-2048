@@ -1,7 +1,7 @@
 import Button from "../../Button";
 
 export function OperatButtons(props) {
-  const { game_state, restart, gameover, turnLeft, turnRight } = props;
+  const { game_state, gameover, turnLeft, turnRight } = props;
   // const restart_button_props = {
   //   value: "重新开始",
   //   onClick: () => {

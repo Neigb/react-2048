@@ -53,10 +53,12 @@ export default class Game extends React.Component {
     cell_array: [],
     init_gengerate_cells: [],
     score: 0,
+    turns: 0,
+    time: 0, // seconds
   };
   touch_start_event = null;
   touch_end_event = null;
-
+  cumulate_timer = null;
   initCellArray() {
     const cell_array = new Array(this.row)
       .fill(0)
@@ -75,7 +77,13 @@ export default class Game extends React.Component {
       game_state: "started",
       cell_array: this.initCellArray(),
       score: 0,
+      time: 0,
+      turns: 0,
     });
+    if (this.cumulate_timer) clearInterval(this.cumulate_timer);
+    this.cumulate_timer = setInterval(() => {
+      this.setState({ time: this.state.time + 1 });
+    }, 1000);
     this.touch_start_event = this.touch_end_event = null;
   }
 
@@ -89,6 +97,7 @@ export default class Game extends React.Component {
   }
 
   handleKeyDown = (event) => {
+    if (this.state.game_state !== "started") return;
     const keyCode = event.keyCode;
     switch (keyCode) {
       case 37:
@@ -113,11 +122,19 @@ export default class Game extends React.Component {
     this.touch_start_event = event;
   }
 
+  start(base_config) {
+    console.log("start");
+    console.log(base_config);
+    this.props.setConfig(base_config);
+    this.init(base_config);
+  }
+
   restart() {
     this.init(this.props.base_config);
   }
 
   gameover() {
+    clearInterval(this.cumulate_timer);
     this.setState({ game_state: "stopped" });
   }
 
@@ -276,10 +293,11 @@ export default class Game extends React.Component {
           (total, item) => total + item,
           0
         );
-      this.setState({ cell_array, score });
+      const turns = this.state.turns + 1;
+      this.setState({ cell_array, score, turns });
     }
     if (this.pendingGameOver(cell_array)) {
-      this.setState({ game_state: "stopped" });
+      this.gameover();
     }
   }
 
@@ -335,14 +353,18 @@ export default class Game extends React.Component {
   }
 
   render() {
-    const { game_state, score } = this.state;
+    const { game_state, score, time } = this.state;
     const isGameOver = game_state === "stopped";
     if (game_state === "init") return <div>loading</div>;
     return (
       <>
         <div className="container-wrap" style={{ maxWidth: max_width + "px" }}>
+          <div className="game-title mb10"><h1>React 2048</h1></div>
           <div className={ isGameOver ? "blur5" : "" }>
-            <p className="mb10 tal fz20">Score: {score}</p>
+            <p className="mb10 fz20" style={{ display: "flex", justifyContent: "space-between"}}>
+              <span>Score: {score}</span>
+              <span>Time: {time}</span>
+            </p>
             <div
               onMouseDown={this.touchStart.bind(this)}
               onMouseUp={this.touchEnd.bind(this)}
@@ -369,7 +391,12 @@ export default class Game extends React.Component {
             />
 
           </div>
-          <GameOverPanel {...this.props} {...this.state} />
+          <GameOverPanel
+            {...this.props}
+            {...this.state}
+            start={this.start.bind(this)}
+            restart={this.restart.bind(this)}
+          />
         </div>
       </>
     );
